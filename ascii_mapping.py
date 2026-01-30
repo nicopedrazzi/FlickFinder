@@ -4,7 +4,7 @@ import requests
 
 
 IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
-DEFAULT_RAMP = " .:-=+*#%@"
+DEFAULT_RAMP = "@%#*+=-:. "
 
 
 def fetch_poster_image(poster_path):

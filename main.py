@@ -4,6 +4,7 @@ import sys
 from config import load_config
 from render import format_details, format_summary_list
 from services import discover_flow, fetch_details, search_summaries, random_flow
+from ascii_mapping import image_to_ascii
 
 def run_search(args):
     try:
@@ -37,6 +38,9 @@ def run_search(args):
     except ValueError as exc:
         print(str(exc))
         return 1
+    ascii_art = image_to_ascii(details.poster_path)
+    if ascii_art:
+        print(ascii_art)
     print(format_details(details))
     return 0
 
@@ -58,6 +62,9 @@ def run_discover(args):
         return 0
     print(format_summary_list(results))
     u_input = int(input("Pick a number: ").strip())
+    ascii_art = image_to_ascii(results[u_input - 1].poster_path)
+    if ascii_art:
+        print(ascii_art)
     try:
         args.title = results[u_input-1].title
         run_search(args)
@@ -81,6 +88,9 @@ def run_random(args):
         return 0
     print(format_summary_list(results))
     u_input = int(input("Pick a number ").strip())
+    ascii_art = image_to_ascii(results[u_input - 1].poster_path)
+    if ascii_art:
+        print(ascii_art)
     try:
         args.title = results[u_input-1].title
         run_search(args)
