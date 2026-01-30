@@ -24,7 +24,7 @@ def image_to_ascii(poster_path, width=80, ramp=DEFAULT_RAMP):
     img = img.convert("L")
     aspect_ratio = img.height / img.width
     height = max(1, int(aspect_ratio * width * 0.55))
-    img = img.resize((width, height))
+    img = img.resize((width, height), Image.Resampling.LANCZOS)
     pixels = img.getdata()
     ramp_len = len(ramp) - 1
     chars = [ramp[int(pixel / 255 * ramp_len)] for pixel in pixels]
