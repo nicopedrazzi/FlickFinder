@@ -1,6 +1,6 @@
 import requests
 from models import TitleDetails, TitleSummary
-
+from random import randint
 
 class TMDBClient:
     def __init__(self, config):
@@ -49,6 +49,18 @@ class TMDBClient:
         data = self._request(f"/discover/{media_type}", params=params)
         results = data.get("results", [])
         return [self._to_summary(item, media_type) for item in results]
+
+    def get_random_movies(self, language, media_type):
+        endpoint = f"{media_type}/popular"
+        params={
+            "language":language,
+            "page": randint(0,500)
+        }
+        data = self._request(endpoint,params=params)
+        results = data.get("results",[])
+        return [self._to_summary(item,media_type) for item in results]
+
+
 
     def list_genres(self, media_type, language):
         data = self._request(f"/genre/{media_type}/list", params={"language": language})

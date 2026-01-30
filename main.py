@@ -1,9 +1,9 @@
 import argparse
+from re import sub
 import sys
-
 from config import load_config
 from render import format_details, format_summary_list
-from services import discover_flow, fetch_details, search_summaries
+from services import discover_flow, fetch_details, search_summaries, random_flow
 
 def run_search(args):
     try:
@@ -65,6 +65,24 @@ def run_discover(args):
     except ValueError as e:
         return e
 
+def run_random(args):
+    try:
+        config = load_config(language=args.language, region=args.region)
+        results = random_flow(config,media_type=args.media_type)
+    except ValueError as e:
+        return e
+    if not results:
+        print("No results found")
+        return 0
+    print(format_summary_list(results))
+    u_input = int(input("Pick a number ").strip())
+    try:
+        args.title = results[u_input-1].title
+        run_search(args)
+        return 0
+
+    except ValueError as e:
+        return e
 
 
 def build_parser():
@@ -90,10 +108,23 @@ def build_parser():
         choices=["movie", "tv"],
         help="movie or tv",
     )
+    random_parser = subparsers.add_parser("random", help="Discover random movies or TV")
+    random_parser.add_argument(
+        "--type",
+        dest="media_type",
+        default="movie",
+        choices=["movie","tv"],
+        help="movie or tv",
+    )
     discover_parser.add_argument("--genre", help="Genre name")
     discover_parser.add_argument("--provider", help="Streaming provider")
     discover_parser.add_argument("--region", help="Country code, e.g. US")
     discover_parser.add_argument("--language", help="Language, e.g. en-US")
+
+    random_parser.add_argument("--genre", help="Genre name")
+    random_parser.add_argument("--provider", help="Streaming provider")
+    random_parser.add_argument("--region", help="Country code, e.g. US")
+    random_parser.add_argument("--language", help="Language, e.g. en-US")
 
     return parser
 
@@ -108,6 +139,8 @@ def main():
         return run_search(args)
     if args.command == "discover":
         return run_discover(args)
+    if args.command == "random":
+        return run_random(args)
     parser.print_help()
     return 0
 

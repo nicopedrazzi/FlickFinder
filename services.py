@@ -1,3 +1,4 @@
+from random import randint
 from tmdb_client import TMDBClient
 
 
@@ -56,3 +57,9 @@ def discover_flow(
         language=config.language,
     )
     return results[:10]
+
+def random_flow(config,media_type):
+    client = TMDBClient(config)
+    results = client.get_random_movies(config.language,media_type)
+    num = randint(1,50)
+    return results[num:num+10]
