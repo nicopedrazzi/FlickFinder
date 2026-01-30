@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, sample
 from tmdb_client import TMDBClient
 
 
@@ -58,8 +58,35 @@ def discover_flow(
     )
     return results[:10]
 
-def random_flow(config,media_type):
+def random_flow(config, media_type, genre_name=None, provider_name=None):
     client = TMDBClient(config)
-    results = client.get_random_movies(config.language,media_type)
-    num = randint(1,50)
-    return results[num:num+10]
+
+    genre_ids = None
+    if genre_name:
+        genre_map = client.list_genres(media_type, language=config.language)
+        genre_id = genre_map.get(genre_name.lower())
+        if genre_id is None:
+            raise ValueError(f"Unknown genre: {genre_name}")
+        genre_ids = [genre_id]
+
+    provider_ids = None
+    if provider_name:
+        provider_map = client.list_watch_providers(media_type, region=config.region)
+        provider_id = provider_map.get(provider_name.lower())
+        if provider_id is None:
+            raise ValueError(f"Unknown provider: {provider_name}")
+        provider_ids = [provider_id]
+
+    page = randint(1, 500)
+    results = client.discover(
+        media_type=media_type,
+        genre_ids=genre_ids,
+        provider_ids=provider_ids,
+        region=config.region,
+        language=config.language,
+        page=page,
+    )
+    if not results:
+        return []
+    count = min(10, len(results))
+    return sample(results, count)

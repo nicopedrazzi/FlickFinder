@@ -37,11 +37,14 @@ class TMDBClient:
         provider_ids,
         region,
         language,
+        page=None,
     ):
         params = {
             "language": language,
             "watch_region": region,
         }
+        if page:
+            params["page"] = page
         if genre_ids:
             params["with_genres"] = ",".join(str(gid) for gid in genre_ids)
         if provider_ids:

@@ -68,7 +68,12 @@ def run_discover(args):
 def run_random(args):
     try:
         config = load_config(language=args.language, region=args.region)
-        results = random_flow(config,media_type=args.media_type)
+        results = random_flow(
+            config,
+            media_type=args.media_type,
+            genre_name=args.genre,
+            provider_name=args.provider,
+        )
     except ValueError as e:
         return e
     if not results:
